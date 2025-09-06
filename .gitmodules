@@ -1,0 +1,6 @@
+[submodule "client"]
+	path = client
+	url = https://github.com/ut42univ/llm-metaverse-client.git
+[submodule "server"]
+	path = server
+	url = https://github.com/ut42univ/llm-metaverse-server.git
