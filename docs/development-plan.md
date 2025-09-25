@@ -1,10 +1,18 @@
 # 開発計画 & マイルストーン (MVP フェーズ)
 
-版数: v0.1  
-作成日: 2025-09-06  
+版数: v0.2  
+更新日: 2025-09-25  
 参照: `spec.md`, `architecture.md`
 
 ---
+
+## 0. 進捗サマリ (2025-09-25)
+
+- ✅ Colyseus ルームとクライアント接続の基本が稼働し、頭部/手ポーズの同期まで確認済み。
+- ✅ デスクトップ操作とリモート補間の実装により、最低限の同期体験が可能。
+- 🔄 XR 入力・手ポーズ送信は実装済みだが、アバター適用・UI/入室フローは未完。
+- ⏳ LiveKit 空間音声、AI パネル、再接続 UI、負荷試験などは未着手。今後の優先度が高い。
+- ⚠️ 進捗遅延: MS4 以降の機能は着手前のため、スケジュール再見直しが必要。
 
 ## 1. ゴール定義
 
@@ -18,16 +26,16 @@ Could (条件付き一部): Image Generation(後半検討)/Assist Prompt (P2 推
 
 ## 3. マイルストーン一覧 (W = 週)
 
-| MS  | 目標                         | 期間 | 成果物                                        | 受入基準フォーカス                |
-| --- | ---------------------------- | ---- | --------------------------------------------- | --------------------------------- |
-| MS1 | 基盤セットアップ             | W1   | Repo 構成/Colyseus Room 雛形/LiveKit 接続 PoC | 初回 Join/Leave 可能              |
-| MS2 | 位置/回転同期 + 補間         | W1-2 | PoseUpdate 実装/補間モジュール                | AC-02 下準備 (レイテンシ局所測定) |
-| MS3 | VR/XR 入力 & ハンド/頭部反映 | W2-3 | WebXR Adapter/Avatar 反映                     | VR HMD で頭部/手同期              |
-| MS4 | 空間音声統合                 | W3   | LiveKit + PannerNode 距離減衰                 | AC-03 測定スクリプト初版          |
-| MS5 | AI 翻訳/要約                 | W3-4 | AI Gateway + UI                               | AC-05 前半測定                    |
-| MS6 | 再接続/エラーハンドリング    | W4   | バックオフ/インジケータ                       | AC-04 検証通過                    |
-| MS7 | 安定化/負荷試験              | W5   | 自動負荷スクリプト/性能ログ                   | AC-01,02,03 確定測定              |
-| MS8 | リリース準備                 | W6   | ドキュメント/デモ動画                         | 全 AC チェックリスト合格          |
+| MS  | 目標                         | 期間 | 成果物                                        | 受入基準フォーカス                | 状態 (2025-09-25)              |
+| --- | ---------------------------- | ---- | --------------------------------------------- | --------------------------------- | ------------------------------ |
+| MS1 | 基盤セットアップ             | W1   | Repo 構成/Colyseus Room 雛形/LiveKit 接続 PoC | 初回 Join/Leave 可能              | ✅ 完了 (LiveKit PoC は未着手) |
+| MS2 | 位置/回転同期 + 補間         | W1-2 | PoseUpdate 実装/補間モジュール                | AC-02 下準備 (レイテンシ局所測定) | ✅ 完了                        |
+| MS3 | VR/XR 入力 & ハンド/頭部反映 | W2-3 | WebXR Adapter/Avatar 反映                     | VR HMD で頭部/手同期              | 🔄 進行中 (手同期/送信は完了)  |
+| MS4 | 空間音声統合                 | W3   | LiveKit + PannerNode 距離減衰                 | AC-03 測定スクリプト初版          | ⏳ 未着手                      |
+| MS5 | AI 翻訳/要約                 | W3-4 | AI Gateway + UI                               | AC-05 前半測定                    | ⏳ 未着手                      |
+| MS6 | 再接続/エラーハンドリング    | W4   | バックオフ/インジケータ                       | AC-04 検証通過                    | ⏳ 未着手                      |
+| MS7 | 安定化/負荷試験              | W5   | 自動負荷スクリプト/性能ログ                   | AC-01,02,03 確定測定              | ⏳ 未着手                      |
+| MS8 | リリース準備                 | W6   | ドキュメント/デモ動画                         | 全 AC チェックリスト合格          | ⏳ 未着手                      |
 
 バッファ: 1 週 (リスク緩和用)。
 
@@ -35,35 +43,35 @@ Could (条件付き一部): Image Generation(後半検討)/Assist Prompt (P2 推
 
 ### 4.1 クライアント
 
-- C1: Three.js シーンベース/カメラリグ雛形
-- C2: Avatar Loader (VRM) + 非同期フェードイン
-- C3: Pose 送信レート制御 + Interpolation Buffer
-- C4: XR Input Adapter / fallback controls
-- C5: Spatial Audio Adapter (PannerNode 配線)
-- C6: Gesture UI + イベント送出
-- C7: AI パネル (翻訳/要約) + 状態管理 (loading/error)
-- C8: 接続ステータスインジケータ (Colyseus/LiveKit)
-- C9: Error/Retry トーストコンポーネント
+- [x] C1: Three.js シーンベース/カメラリグ雛形
+- [~] C2: Avatar Loader (VRM) + 非同期フェードイン — `/vrm` では完了、体験シーン連携は未了
+- [x] C3: Pose 送信レート制御 + Interpolation Buffer
+- [~] C4: XR Input Adapter / fallback controls — XR モード切替・手ポーズ送信まで実装
+- [ ] C5: Spatial Audio Adapter (PannerNode 配線)
+- [ ] C6: Gesture UI + イベント送出
+- [ ] C7: AI パネル (翻訳/要約) + 状態管理 (loading/error)
+- [ ] C8: 接続ステータスインジケータ (Colyseus/LiveKit)
+- [ ] C9: Error/Retry トーストコンポーネント
 
 ### 4.2 サーバ
 
-- S1: Colyseus MyRoom スケルトン (容量制御)
-- S2: State Schema (Players / Gestures)
-- S3: Pose Update Handling + Broadcast (差分最適化パッチ)
-- S4: Gesture Event Handling (idempotent)
-- S5: Reconnect セッションハンドリング (短期再参加)
-- S6: AI Gateway 抽象 & Provider 実装 (Mock → 本番)
-- S7: LiveKit トークン発行エンドポイント (音声)
-- S8: Metrics/Logging 最小
+- [x] S1: Colyseus MyRoom スケルトン (容量制御)
+- [x] S2: State Schema (Players / Gestures) — 現状ジェスチャーフィールド未使用
+- [x] S3: Pose Update Handling + Broadcast (差分最適化パッチ)
+- [ ] S4: Gesture Event Handling (idempotent)
+- [ ] S5: Reconnect セッションハンドリング (短期再参加)
+- [ ] S6: AI Gateway 抽象 & Provider 実装 (Mock → 本番)
+- [ ] S7: LiveKit トークン発行エンドポイント (音声)
+- [ ] S8: Metrics/Logging 最小
 
 ### 4.3 テスト / ツール
 
-- T1: 補間アルゴ単体テスト (境界: 欠損/外挿上限)
-- T2: Room 容量 / JoinReject テスト
-- T3: Reconnect シナリオ (ネットワーク切断シミュレーション)
-- T4: AI Timeout / Retry モックテスト
-- T5: 負荷試験 (10 Bots 10 分) スクリプト & レポート
-- T6: Spatial Audio 物理検証 (5m 距離音圧比計測) ※自動化は簡易ログ
+- [ ] T1: 補間アルゴ単体テスト (境界: 欠損/外挿上限)
+- [ ] T2: Room 容量 / JoinReject テスト
+- [ ] T3: Reconnect シナリオ (ネットワーク切断シミュレーション)
+- [ ] T4: AI Timeout / Retry モックテスト
+- [ ] T5: 負荷試験 (10 Bots 10 分) スクリプト & レポート
+- [ ] T6: Spatial Audio 物理検証 (5m 距離音圧比計測) ※自動化は簡易ログ
 
 ## 5. タスク依存関係 (Mermaid)
 
@@ -86,7 +94,11 @@ graph TD
   T5-->MS7
 ```
 
+> 進捗メモ: S1, S2, S3 は完了済み。S4/S5 以降および T5 以降はこれから着手。
+
 ## 6. 計測 & 品質ゲート
+
+> 現時点で自動計測・ログ収集は未整備。MS4 以降で順次着手予定。
 
 | ゲート        | 基準                      | 測定方法                          |
 | ------------- | ------------------------- | --------------------------------- |
@@ -119,13 +131,13 @@ PR テンプレ: 変更概要 / 動作確認 / スクリーンショット / 関
 
 ## 9. リスク対応トラッキング
 
-| ID              | 状態 | 対策進捗                       |
-| --------------- | ---- | ------------------------------ |
-| R1 (ジッター)   | 未   | C3 実装で補間追加              |
-| R2 (AI 遅延)    | 未   | S6 タイムアウト + ローディング |
-| R3 (XR 差異)    | 未   | C4 で feature detect           |
-| R4 (再接続失敗) | 未   | S5 & T3 強化                   |
-| R5 (帯域超過)   | 未   | C3 動き無時スロットル          |
+| ID              | 状態 | 対策進捗                        |
+| --------------- | ---- | ------------------------------- |
+| R1 (ジッター)   | 部分 | C3 実装で補間追加。評価は未実施 |
+| R2 (AI 遅延)    | 未   | S6 タイムアウト + ローディング  |
+| R3 (XR 差異)    | 部分 | C4 で feature detect 実装済     |
+| R4 (再接続失敗) | 未   | S5 & T3 強化                    |
+| R5 (帯域超過)   | 未   | C3 動き無時スロットル (要調整)  |
 
 ## 10. デモ / 検証フロー
 
