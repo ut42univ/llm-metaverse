@@ -63,7 +63,6 @@ graph LR
 
 - **クライアント (Frontend):** Next.js, TypeScript, React Three Fiber, Colyseus.js, Radix UI, Tailwind CSS
 - **サーバー (Backend):** Colyseus, LiveKit, Supabase
-- **翻訳・AI API:** FastAPI, SeamlessM4T v2
 
 ## ビルドと実行
 
@@ -75,20 +74,12 @@ npm install
 npm start
 ```
 
-### 2. 翻訳 API の起動
-
-```bash
-cd translation-api
-uv sync
-uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-### 3. Next.js クライアントの起動
+### 2. Next.js クライアントの起動
 
 ```bash
 cd client
-npm install
-npm run dev
+yarn install
+yarn dev
 ```
 
 クライアントは [http://localhost:3000](http://localhost:3000) で利用可能になります。
@@ -97,5 +88,4 @@ npm run dev
 
 - **`client/`:** 3D ワールドをレンダリングし、ユーザーインタラクションを処理する Next.js フロントエンドアプリケーション。
 - **`server/`:** プレイヤーの位置や回転など、メタバースのリアルタイムな状態を管理する Colyseus サーバー。
-- **`translation-api/`:** 事前学習済み AI モデルを使用してテキストおよび音声翻訳サービスを提供する Python ベースの API。
 - **`docs/`:** 仕様書、アーキテクチャ図、開発計画などのプロジェクトドキュメント。
