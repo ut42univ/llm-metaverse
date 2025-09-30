@@ -1,74 +1,101 @@
-# llm-metaverse (MVP)
+# Project LLMeta
 
-軽量 WebXR / Web リアルタイム空間 (研究開発プロトタイプ)。最大 10 名で位置・回転・(VR) 頭部/ハンド同期し、空間音声 + 翻訳/要約 AI を提供。
+## 概要
 
-## コア機能 (MVP)
+Project LLMeta は、ユーザーが共有の 3D 空間でリアルタイムに交流し、AI によるコミュニケーション支援を受けられる軽量な WebXR メタバース体験プロジェクトです。
 
-- 単一ルーム / 最大 10 ユーザー
-- 位置 / 回転 / (VR) 頭部・ハンド 20Hz 目標同期 + 補間
-- 距離減衰付き空間音声 (LiveKit + WebAudio)
-- 翻訳 / 要約 (AI Gateway)
-- 再接続 (バックオフ復帰)
-- ジェスチャー (Should / 実装進行中)
+## 主な機能
 
-詳細要件: `docs/spec.md`
+- **リアルタイムコミュニケーション:** 最大 10 名のユーザーが、空間オーディオを備えた 3D 空間で円滑に音声会話できます。
+- **AI による支援:** 各ユーザーにパーソナライズされた AI エージェントが、会話の要約、解説、関連画像の自動生成など、コミュニケーションを豊かにします。
+- **クロスプラットフォーム:** デスクトップブラウザおよび XR デバイスからシームレスにアクセス可能です。
 
-## ディレクトリ
+## システムアーキテクチャ
 
-| パス      | 説明                                    |
-| --------- | --------------------------------------- |
-| `client/` | Next.js + Three.js (WebXR) クライアント |
-| `server/` | Colyseus 同期サーバ                     |
-| `docs/`   | 要件 / アーキ / 計画ドキュメント        |
+システムは、フロントエンド、バックエンドサービス、AI エージェントの 3 層で構成されています。詳細については `docs/system-architecture.md` を参照してください。
 
-## クイックスタート
+```mermaid
+graph LR
+    subgraph "User"
+        UserBrowser["🌐 User's Browser"]
+    end
 
-別ターミナルでサーバとクライアントを起動。
+    subgraph "Frontend"
+        Client["<b>Client (Next.js)</b>"]
+    end
 
-1. 依存インストール
+    subgraph "Backend Services"
+        Colyseus["<b>Multiplayer Server</b><br/>(Colyseus)"]
+        LiveKit["<b>Media Server</b><br/>(LiveKit SFU)"]
+        Supabase["<b>Auth & DB</b><br/>(Supabase)"]
+        AIService["<b>AI Service</b><br/>(FastAPI, Whisper, LLM, Image Gen)"]
+    end
 
-```bash
-cd server && npm install
-cd ../client && npm install
+    subgraph "AI Agents (Scalable)"
+        AIAgentPool["🤖 <b>AI Agent Pool</b><br/>(1 Agent per User)"]
+    end
+
+    UserBrowser --> Client
+
+    Client -- "Auth (JWT)" --> Supabase
+    Client -- "Join with JWT" --> Colyseus
+    Client -- "Join with JWT" --> LiveKit
+
+    Colyseus -- "Public State (Images, etc.)" <--> Client
+    Colyseus -- "Private Messages (Summaries, etc.)" --> Client
+    LiveKit -- "Audio/Video Stream" <--> Client
+
+    %% AI Agent Flow
+    AIAgentPool -- "Connects as Client" --> LiveKit
+    AIAgentPool -- "Connects as Client" --> Colyseus
+
+    LiveKit -- "Nearby Audio Streams" --> AIAgentPool
+    AIAgentPool -- "API Request (STT, Summary, Img Prompt)" --> AIService
+    AIService -- "API Response (Text, Image URL)" --> AIAgentPool
+
+    AIAgentPool -- "Update Public State (e.g., Shared Image URL)" --> Colyseus
+    AIAgentPool -- "Send Private Message (e.g., Summary Text)" --> Colyseus
 ```
 
-2. サーバ起動
+## 技術スタック
+
+主要な技術スタックは以下の通りです。詳細については `docs/technology-stack.ja.md` を参照してください。
+
+- **クライアント (Frontend):** Next.js, TypeScript, React Three Fiber, Colyseus.js, Radix UI, Tailwind CSS
+- **サーバー (Backend):** Colyseus, LiveKit, Supabase
+- **翻訳・AI API:** FastAPI, SeamlessM4T v2
+
+## ビルドと実行
+
+### 1. Colyseus サーバーの起動
 
 ```bash
 cd server
-npm start  # ws://localhost:2567
+npm install
+npm start
 ```
 
-3. クライアント起動
+### 2. 翻訳 API の起動
+
+```bash
+cd translation-api
+uv sync
+uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### 3. Next.js クライアントの起動
 
 ```bash
 cd client
-npm run dev  # http://localhost:3000
+npm install
+npm run dev
 ```
 
-4. ブラウザアクセス → ニックネーム入力で参加。
+クライアントは [http://localhost:3000](http://localhost:3000) で利用可能になります。
 
-VR (Quest) 対応ブラウザで同 URL → WebXR セッション開始。
+## ディレクトリ構成
 
-## 主な環境変数
-
-| 変数                          | 用途               | 例                   |
-| ----------------------------- | ------------------ | -------------------- |
-| NEXT_PUBLIC_COLYSEUS_ENDPOINT | クライアント接続先 | ws://localhost:2567  |
-| LIVEKIT_URL                   | LiveKit SFU        | wss://localhost:7880 |
-| LIVEKIT_API_KEY / SECRET      | トークン署名       | (ローカル)           |
-| AI_PROVIDER                   | AI 切替            | mock / openai        |
-
-未設定部分はモック/限定動作。
-
-## 参照ドキュメント
-
-- 要件: `docs/spec.md`
-- アーキテクチャ: `docs/architecture.md`
-- 開発計画: `docs/development-plan.md`
-
-## ライセンス
-
-TBD (研究用途)。
-
----
+- **`client/`:** 3D ワールドをレンダリングし、ユーザーインタラクションを処理する Next.js フロントエンドアプリケーション。
+- **`server/`:** プレイヤーの位置や回転など、メタバースのリアルタイムな状態を管理する Colyseus サーバー。
+- **`translation-api/`:** 事前学習済み AI モデルを使用してテキストおよび音声翻訳サービスを提供する Python ベースの API。
+- **`docs/`:** 仕様書、アーキテクチャ図、開発計画などのプロジェクトドキュメント。

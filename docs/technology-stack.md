@@ -1,62 +1,31 @@
 # Technology Stack
 
-This document outlines the current and considered technology stack for the LLM Metaverse project, reflecting the architecture discussions as of 2025-09-30.
+This document outlines the technology stack used in the LLM Metaverse project, based on the system architecture and client-side documentation.
 
-## 1. Core Stack (Currently Implemented)
+## Frontend (Client)
 
-These are the technologies actively used in the current version of the project.
+The client is a Next.js application responsible for rendering the 3D world and handling user interactions.
 
-### Frontend (Client)
+- **Framework:** [Next.js](https://nextjs.org/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **3D Rendering:**
+    - [@react-three/fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction)
+    - [@react-three/drei](https://github.com/pmndrs/drei)
+- **Multiplayer:** [Colyseus.js](https://docs.colyseus.io/colyseus/getting-started/javascript-client/)
+- **UI:**
+    - [Radix UI](https://www.radix-ui.com/)
+    - [Tailwind CSS](https://tailwindcss.com/)
+- **XR:** [@react-three/xr](https://docs.pmnd.rs/react-xr/introduction)
 
-- **Framework**: Next.js / React
-- **Language**: TypeScript
-- **3D Rendering**: `@react-three/fiber`, `@react-three/drei`
-- **XR**: `@react-three/xr`
-- **Multiplayer Client**: `colyseus.js`
-- **UI/Styling**: Tailwind CSS, Radix UI
+## Backend Services
 
-### Backend
+The backend is composed of several microservices to handle different aspects of the application.
 
-#### Multiplayer Server
-
-- **Framework**: Colyseus
-- **Environment**: Node.js
-- **Language**: TypeScript
-- **Primary Role**: Manages real-time synchronization of player states (position, rotation, etc.).
-
-#### AI Service
-
-- **Framework**: FastAPI
-- **Language**: Python
-- **Primary Role**: Provides AI-powered services like text translation.
-- **Model**: SeamlessM4T v2
-- **Future Direction**: This self-hosted service is a candidate for replacement by one of the options listed under "Advanced AI Integration" to reduce maintenance overhead.
-
-## 2. Future Considerations
-
-These are technologies and services being considered for future integration to enhance the platform's capabilities.
-
-### BaaS (Backend as a Service)
-
-- **Service**: Supabase
-- **Potential Roles**:
-    - **Auth**: User authentication and authorization.
-    - **Database**: Persistent storage for user profiles, world data, etc.
-    - **Storage**: Storing user-uploaded assets like VRM avatars.
-
-### Real-time Voice & Spatial Audio
-
-- **Service**: LiveKit
-- **Potential Role**:
-    - Provides real-time, low-latency voice communication using WebRTC.
-    - Enables spatial audio, where the volume and panning of a user's voice depend on their position in the 3D world.
-
-### Advanced AI Integration
-
-- **Concept**: Cloud AI APIs & LiveKit Agents
-- **Potential Roles**:
-    - **Direct Cloud AI APIs**: Instead of self-hosting, use managed services (e.g., Google AI, OpenAI API) for text-based AI features. This would be called from the client or a lightweight backend gateway, replacing the FastAPI service.
-    - **AI Agent for LiveKit**: A server-side bot that connects to a LiveKit room. It could handle both voice and text-based AI tasks:
-        - **Voice**: Live transcription (Speech-to-Text), real-time voice translation.
-        - **Text**: Process text commands or translations, potentially unifying all AI interactions through a single interface.
-        - **Interaction**: Power interactive AI characters.
+- **Multiplayer Server:** [Colyseus](https://www.colyseus.io/) - Manages real-time state and communication between clients.
+- **Media Server:** [LiveKit](https://livekit.io/) - Handles real-time audio and video streaming (SFU).
+- **Authentication & Database:** [Supabase](https://supabase.com/) - Provides authentication and database services.
+- **AI Service:**
+    - **Framework:** [FastAPI](https://fastapi.tiangolo.com/)
+    - **Speech-to-Text:** [Whisper](https://openai.com/research/whisper)
+    - **Language Model:** A Large Language Model (LLM) for various AI-powered features.
+    - **Image Generation:** An image generation model to create visuals from text prompts.
