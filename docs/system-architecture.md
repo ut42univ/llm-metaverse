@@ -6,14 +6,43 @@ This document provides a visual representation of the current and considered sys
 
 ```mermaid
 graph LR
-    UserBrowser["🌐 User's Browser<br/>(Desktop/XR)"] --> Client["<b>Client</b><br/>(Next.js, React, R3F)"]
+    subgraph "User"
+        UserBrowser["🌐 User's Browser"]
+    end
 
-    Client -- "WebSocket" --> Colyseus["<b>Multiplayer Server</b><br/>(Colyseus)<br/>State Sync"]
-    Client -- "WebSocket" --> LiveKit["<b>Media Server</b><br/>(LiveKit SFU)<br/>Spatial Audio"]
-    Client -- "HTTP/REST" --> Supabase["<b>Auth & DB</b><br/>(Supabase)"]
+    subgraph "Frontend"
+        Client["<b>Client (Next.js)</b>"]
+    end
 
-    AIAgent["🤖 <b>AI Agent Bot</b><br/>(LiveKit Agents)"] -- "WebSocket" --> LiveKit
-    AIAgent -- "WebSocket" --> Colyseus
+    subgraph "Backend Services"
+        Colyseus["<b>Multiplayer Server</b><br/>(Colyseus)"]
+        LiveKit["<b>Media Server</b><br/>(LiveKit SFU)"]
+        Supabase["<b>Auth & DB</b><br/>(Supabase)"]
+        AIService["<b>AI Service</b><br/>(FastAPI, Whisper, LLM, Image Gen)"]
+    end
 
-    LiveKit -- "Audio Stream" --> TranslationAPI["<b>Translation/STT API</b><br/>(FastAPI, Whisper)"]
+    subgraph "AI Agents (Scalable)"
+        AIAgentPool["🤖 <b>AI Agent Pool</b><br/>(1 Agent per User)"]
+    end
+
+    UserBrowser --> Client
+
+    Client -- "Auth (JWT)" --> Supabase
+    Client -- "Join with JWT" --> Colyseus
+    Client -- "Join with JWT" --> LiveKit
+
+    Colyseus -- "Public State (Images, etc.)" <--> Client
+    Colyseus -- "Private Messages (Summaries, etc.)" --> Client
+    LiveKit -- "Audio/Video Stream" <--> Client
+
+    %% AI Agent Flow
+    AIAgentPool -- "Connects as Client" --> LiveKit
+    AIAgentPool -- "Connects as Client" --> Colyseus
+
+    LiveKit -- "Nearby Audio Streams" --> AIAgentPool
+    AIAgentPool -- "API Request (STT, Summary, Img Prompt)" --> AIService
+    AIService -- "API Response (Text, Image URL)" --> AIAgentPool
+
+    AIAgentPool -- "Update Public State (e.g., Shared Image URL)" --> Colyseus
+    AIAgentPool -- "Send Private Message (e.g., Summary Text)" --> Colyseus
 ```
