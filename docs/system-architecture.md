@@ -5,25 +5,15 @@ This document provides a visual representation of the current and considered sys
 **Note:** This architecture is flexible and subject to change as the project evolves. Dotted lines and components represent future considerations or alternative options.
 
 ```mermaid
-graph TD
-    UserBrowser["🌐 User's Browser (Desktop/XR)"]
-    Client["<b>Client Application</b><br/>Next.js / React"]
-    ColyseusServer["<b>Colyseus Server</b><br/>(State Sync)"]
-    SelfHostedAI["<b>Self-hosted AI</b><br/>(FastAPI)<br/><i>Option 1</i>"]
-    Supabase["<b>Supabase</b><br/>(Auth, DB)"]
-    LiveKit["<b>LiveKit SFU</b><br/>(Audio, AI Host)"]
-    AIAgent["<b>AI Agent</b><br/>(Voice, Text)<br/><i>Option 2</i>"]
-    CloudAI["<b>Cloud AI APIs</b><br/>(Google, etc.)<br/><i>Option 3</i>"]
+graph LR
+    UserBrowser["🌐 User's Browser<br/>(Desktop/XR)"] --> Client["<b>Client</b><br/>(Next.js, React, R3F)"]
 
-    %% --- Connections ---
-    UserBrowser --> Client
-    Client --> ColyseusServer
+    Client -- "WebSocket" --> Colyseus["<b>Multiplayer Server</b><br/>(Colyseus)<br/>State Sync"]
+    Client -- "WebSocket" --> LiveKit["<b>Media Server</b><br/>(LiveKit SFU)<br/>Spatial Audio"]
+    Client -- "HTTP/REST" --> Supabase["<b>Auth & DB</b><br/>(Supabase)"]
 
-    Client --> SelfHostedAI
-    Client -.-> LiveKit
-    LiveKit --> AIAgent
-    Client -.-> CloudAI
+    AIAgent["🤖 <b>AI Agent Bot</b><br/>(LiveKit Agents)"] -- "WebSocket" --> LiveKit
+    AIAgent -- "WebSocket" --> Colyseus
 
-    Client -.-> Supabase
-    Client -.-> LiveKit
+    LiveKit -- "Audio Stream" --> TranslationAPI["<b>Translation/STT API</b><br/>(FastAPI, Whisper)"]
 ```
