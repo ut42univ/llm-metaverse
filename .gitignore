@@ -1,3 +1,8 @@
-supabase/.temp/
-supabase/.branches/
-supabase/migrations/*.sql.generated # If using auto-generated migration files
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
