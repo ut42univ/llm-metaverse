@@ -4,3 +4,6 @@
 [submodule "server"]
 	path = server
 	url = https://github.com/ut42univ/llmeta-server.git
+[submodule "research"]
+	path = research
+	url = https://github.com/ut42univ/llmeta-research.git
