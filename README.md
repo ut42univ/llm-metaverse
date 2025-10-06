@@ -66,6 +66,30 @@ graph LR
 
 ## ビルドと実行
 
+### 0. Supabase ローカル環境の起動
+
+```bash
+cd supabase
+cp .env.example .env    # 初回のみ。GitHub OAuth のクレデンシャルを設定
+supabase start
+```
+
+`supabase start` 実行後、ターミナルに表示される `anon key` を `client/.env.local` の `NEXT_PUBLIC_SUPABASE_ANON_KEY` に設定してください。
+同時に `API URL` が `http://127.0.0.1:54321` なのか `http://localhost:54321` なのかを確認し、その値に合わせて `SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI` を更新します。
+
+GitHub OAuth アプリは以下の設定で作成し、取得したクレデンシャルと合わせて `supabase/.env` に保存します。
+
+- **Homepage URL:** `http://127.0.0.1:3000`
+- **Authorization callback URL:** `http://127.0.0.1:54321/auth/v1/callback` (または Supabase CLI の `API URL` に合わせたホスト名)
+
+`supabase/.env` に設定する値の例：
+
+```
+SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID=gho_xxxxxxxxx
+SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET=ghs_xxxxxxxxx
+SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI=http://127.0.0.1:54321/auth/v1/callback
+```
+
 ### 1. Colyseus サーバーの起動
 
 ```bash
